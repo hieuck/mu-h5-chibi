@@ -9,16 +9,16 @@ describe('AssetManifest', () => {
     expect(chars.every(c => c.category === AssetCategory.Character)).toBe(true);
   });
 
-  test('each character has idle animation frames', () => {
-    const manifest = new AssetManifest();
+    test('each character has idle animation defined', () => {
+      const manifest = new AssetManifest();
 
-    const chars = manifest.getByCategory(AssetCategory.Character);
-    for (const char of chars) {
-      expect(char.frameWidth).toBe(64);
-      expect(char.frameHeight).toBe(64);
-      expect(char.animations.idle.frames).toBeGreaterThanOrEqual(2);
-    }
-  });
+      const chars = manifest.getByCategory(AssetCategory.Character);
+      for (const char of chars) {
+        expect(char.frameWidth).toBe(64);
+        expect(char.frameHeight).toBe(64);
+        expect(char.animations.idle.frames).toBeGreaterThanOrEqual(1);
+      }
+    });
 
   test('manifest has monster sprites', () => {
     const manifest = new AssetManifest();

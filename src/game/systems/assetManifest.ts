@@ -24,17 +24,17 @@ export interface AssetDef {
 }
 
 const MANIFEST: AssetDef[] = [
-  // ── Characters (5 classes × 64×64 sprites) ──
-  { key: 'character_dk',  name: 'Dark Knight',     path: 'assets/sprites/dk.png',     category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 4, frameRate: 8, repeat: -1 }, attack: { frames: 4, frameRate: 12, repeat: 0 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
-  { key: 'character_dw',  name: 'Dark Wizard',     path: 'assets/sprites/dw.png',     category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 4, frameRate: 8, repeat: -1 }, attack: { frames: 4, frameRate: 12, repeat: 0 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
-  { key: 'character_elf', name: 'Elf',             path: 'assets/sprites/elf.png',    category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 4, frameRate: 8, repeat: -1 }, attack: { frames: 4, frameRate: 12, repeat: 0 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
-  { key: 'character_sum', name: 'Summoner',        path: 'assets/sprites/sum.png',    category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 4, frameRate: 8, repeat: -1 }, attack: { frames: 4, frameRate: 12, repeat: 0 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
-  { key: 'character_mg',  name: 'Magic Gladiator', path: 'assets/sprites/mg.png',     category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 4, frameRate: 8, repeat: -1 }, attack: { frames: 4, frameRate: 12, repeat: 0 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
+  // ── Characters (single frame 64×64) ──
+  { key: 'character_dk',  name: 'Dark Knight',     path: 'assets/sprites/dk.png',     category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
+  { key: 'character_dw',  name: 'Dark Wizard',     path: 'assets/sprites/dw.png',     category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
+  { key: 'character_elf', name: 'Elf',             path: 'assets/sprites/elf.png',    category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
+  { key: 'character_sum', name: 'Summoner',        path: 'assets/sprites/sum.png',    category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
+  { key: 'character_mg',  name: 'Magic Gladiator', path: 'assets/sprites/mg.png',     category: AssetCategory.Character, frameWidth: 64, frameHeight: 64, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
 
-  // ── Monsters (32×32 sprites) ──
-  { key: 'monster_goblin',    name: 'Goblin',    path: 'assets/sprites/goblin.png',    category: AssetCategory.Monster, frameWidth: 32, frameHeight: 32, animations: { idle: { frames: 2, frameRate: 4, repeat: -1 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
-  { key: 'monster_skeleton',  name: 'Skeleton',  path: 'assets/sprites/skeleton.png',  category: AssetCategory.Monster, frameWidth: 32, frameHeight: 32, animations: { idle: { frames: 2, frameRate: 4, repeat: -1 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
-  { key: 'monster_giant',     name: 'Giant',     path: 'assets/sprites/giant.png',     category: AssetCategory.Monster, frameWidth: 48, frameHeight: 48, animations: { idle: { frames: 2, frameRate: 4, repeat: -1 }, hurt: { frames: 2, frameRate: 6, repeat: 0 } } },
+  // ── Monsters (single frame) ──
+  { key: 'monster_goblin',    name: 'Goblin',    path: 'assets/sprites/goblin.png',    category: AssetCategory.Monster, frameWidth: 32, frameHeight: 32, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
+  { key: 'monster_skeleton',  name: 'Skeleton',  path: 'assets/sprites/skeleton.png',  category: AssetCategory.Monster, frameWidth: 32, frameHeight: 32, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
+  { key: 'monster_giant',     name: 'Giant',     path: 'assets/sprites/giant.png',     category: AssetCategory.Monster, frameWidth: 48, frameHeight: 48, animations: { idle: { frames: 1, frameRate: 1, repeat: -1 } } },
 
   // ── Item icons (32×32) ──
   { key: 'item_short_sword', name: 'Short Sword', path: 'assets/items/weapons.png',    category: AssetCategory.Item, frameWidth: 32, frameHeight: 32, animations: { idle: { frames: 1, frameRate: 1, repeat: 0 } } },
