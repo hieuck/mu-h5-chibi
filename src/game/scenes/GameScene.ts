@@ -86,7 +86,7 @@ export class GameScene extends Phaser.Scene {
     // Stats panel
     this.statsPanel = new StatsPanel(this, GAME_WIDTH - 210, 43);
     this.statsPanel.onAllocate((stat) => {
-      try { this.session.getTeamMember(1).allocateStat(stat as any, 1); } catch {}
+      try { this.session.getTeamMember(0).allocateStat(stat as any, 1); } catch {}
       this.refreshAll();
     });
 
@@ -107,7 +107,7 @@ export class GameScene extends Phaser.Scene {
       this.inventoryUI.toggle();
       if (this.inventoryUI.isVisible) {
         this.inventoryUI.refresh(this.session.getInventory(), (item, index) => {
-          const char = this.session.getTeamMember(1);
+          const char = this.session.getTeamMember(0);
           try {
             const old = char.equip(item);
             this.session.getInventory().remove(index);
@@ -239,7 +239,7 @@ export class GameScene extends Phaser.Scene {
   private lastLevel: number = 1;
 
   private refreshAll(): void {
-    const leader = this.session.getTeamMember(1);
+    const leader = this.session.getTeamMember(0);
     this.statsPanel.updateStats(
       leader.stats, leader.totalAttackPower, leader.totalDefense,
       leader.level, leader.resetCount, leader.availableStatPoints,
@@ -248,7 +248,7 @@ export class GameScene extends Phaser.Scene {
 
     this.teamSprites.forEach((s, i) => {
       if (i < this.session.teamSize) {
-        const m = this.session.getTeamMember(i + 1);
+        const m = this.session.getTeamMember(i);
         const barX = 120 + i * 140 - 22;
         const barY = GAME_HEIGHT / 2 + 58;
         const pct = m.hp / m.maxHp;
