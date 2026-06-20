@@ -63,6 +63,8 @@ export function autoFarmTick(team: Team, area: FarmArea, skillDb?: SkillDatabase
       if (!target.isAlive) {
         expGained += EXP_PER_KILL;
         member.addExp(EXP_PER_KILL);
+        const goldShare = Math.floor(target.goldValue / team.members.filter(m => m.hp > 0).length);
+        team.members.forEach(m => { if (m.hp > 0) m.gold += goldShare; });
       }
     } else {
       const damage = calculateDamage(member, target);
@@ -70,6 +72,8 @@ export function autoFarmTick(team: Team, area: FarmArea, skillDb?: SkillDatabase
       if (!target.isAlive) {
         expGained += EXP_PER_KILL;
         member.addExp(EXP_PER_KILL);
+        const goldShare = Math.floor(target.goldValue / team.members.filter(m => m.hp > 0).length);
+        team.members.forEach(m => { if (m.hp > 0) m.gold += goldShare; });
       }
     }
   }
@@ -107,6 +111,8 @@ export function autoFarmTickWithLoot(
       if (!target.isAlive) {
         expGained += EXP_PER_KILL;
         member.addExp(EXP_PER_KILL);
+        const alive = team.members.filter(m => m.hp > 0);
+        alive.forEach(m => m.gold += Math.floor(target.goldValue / alive.length));
         if (itemResolver && target.dropTable) {
           const drop = target.dropTable.roll(Math.random());
           if (drop && !inventory.isFull) {
@@ -121,6 +127,8 @@ export function autoFarmTickWithLoot(
       if (!target.isAlive) {
         expGained += EXP_PER_KILL;
         member.addExp(EXP_PER_KILL);
+        const alive = team.members.filter(m => m.hp > 0);
+        alive.forEach(m => m.gold += Math.floor(target.goldValue / alive.length));
         if (itemResolver && target.dropTable) {
           const drop = target.dropTable.roll(Math.random());
           if (drop && !inventory.isFull) {

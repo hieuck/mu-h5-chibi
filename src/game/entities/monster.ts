@@ -27,6 +27,10 @@ export class Monster {
     return this.hp > 0;
   }
 
+  get goldValue(): number {
+    return this.level * 10 + Math.floor(Math.random() * 5);
+  }
+
   takeDamage(amount: number): void {
     this.hp = Math.max(0, this.hp - amount);
   }
