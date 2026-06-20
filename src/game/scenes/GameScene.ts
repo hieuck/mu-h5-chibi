@@ -8,6 +8,7 @@ import { DropTable } from '../systems/loot';
 import { ItemDatabase } from '../data/itemDatabase';
 import { CharacterClass } from '../entities/character';
 import { getCharacterRenderData, getMonsterRenderData, RenderData } from '../systems/visualRenderData';
+import { StatsPanel } from '../ui/StatsPanel';
 
 export class GameScene extends Phaser.Scene {
   private session!: GameSession;
@@ -19,6 +20,8 @@ export class GameScene extends Phaser.Scene {
   private teamRenders: { data: RenderData; graphics: Phaser.GameObjects.Graphics }[] = [];
   // Monster rendering
   private monsterRenders: { data: RenderData; graphics: Phaser.GameObjects.Graphics; hpBar: Phaser.GameObjects.Graphics }[] = [];
+  // Stats panel
+  private statsPanel!: StatsPanel;
 
   constructor() {
     super({ key: SCENE_KEYS.GAME });
@@ -71,7 +74,28 @@ export class GameScene extends Phaser.Scene {
       wordWrap: { width: GAME_WIDTH - 50 },
     });
 
+    // Stats panel
+    const leader = this.session.getTeamMember(0);
+    this.statsPanel = new StatsPanel(this, GAME_WIDTH - 210, 50);
+    this.statsPanel.onAllocate((stat) => {
+      try { leader.allocateStat(stat as any, 1); } catch { }
+      this.refreshStats();
+    });
+    this.refreshStats();
+
     this.scene.launch(SCENE_KEYS.HUD);
+  }
+
+  private refreshStats(): void {
+    const char = this.session.getTeamMember(0);
+    this.statsPanel.updateStats(
+      char.stats,
+      char.totalAttackPower,
+      char.totalDefense,
+      char.level,
+      char.resetCount,
+      char.availableStatPoints,
+    );
   }
 
   private createGameSession(): GameSession {
@@ -231,6 +255,7 @@ export class GameScene extends Phaser.Scene {
       r.graphics.clear();
       this.drawCharacter(r.graphics, r.data, i === 0);
     });
+    this.refreshStats();
   }
 
   private logCombat(msg: string): void {
