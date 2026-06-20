@@ -38,6 +38,8 @@ export class GameSession {
   get currentMapId(): string { return this._currentMap?.id ?? 'none'; }
   get inventorySize(): number { return this._inventory.size; }
   getGold(): number { return this._team.members[0]?.gold ?? 0; }
+  getTeam(): Team { return this._team; }
+  getTeamMember(index: number): Character { return this._team.members[index]; }
 
   addCharacter(name: string, className: string): void {
     const classMap: Record<string, CharacterClass> = {
