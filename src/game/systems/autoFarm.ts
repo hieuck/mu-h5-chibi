@@ -3,7 +3,11 @@ import { Monster } from '../entities/monster';
 import { calculateDamage, combatTickWithSkills } from './combat';
 import { Inventory } from './inventory';
 import { Equipment } from '../entities/equipment';
-import { SkillDatabase } from './skills';
+import { Skill } from './skills';
+
+export interface SkillProvider {
+  getUnlockedSkills(character: { level: number; class: any }): Skill[];
+}
 
 export interface FarmAreaOptions {
   name: string;
@@ -47,7 +51,7 @@ export class FarmArea {
   }
 }
 
-export function autoFarmTick(team: Team, area: FarmArea, skillDb?: SkillDatabase): number {
+export function autoFarmTick(team: Team, area: FarmArea, skillProvider?: SkillProvider): number {
   let expGained = 0;
 
   for (const member of team.members) {
@@ -58,8 +62,8 @@ export function autoFarmTick(team: Team, area: FarmArea, skillDb?: SkillDatabase
 
     const target = aliveMonsters[0];
 
-    if (skillDb) {
-      const result = combatTickWithSkills(member, target, skillDb);
+    if (skillProvider) {
+      const result = combatTickWithSkills(member, target, skillProvider);
       if (!target.isAlive) {
         expGained += EXP_PER_KILL;
         member.addExp(EXP_PER_KILL);
@@ -95,7 +99,7 @@ export function autoFarmTickWithLoot(
   area: FarmArea,
   inventory: Inventory,
   itemResolver?: (itemId: string) => Equipment | undefined,
-  skillDb?: SkillDatabase,
+  skillProvider?: SkillProvider,
 ): LootResult {
   const loot: string[] = [];
   let expGained = 0;
@@ -106,8 +110,8 @@ export function autoFarmTickWithLoot(
     if (aliveMonsters.length === 0) break;
     const target = aliveMonsters[0];
 
-    if (skillDb) {
-      const result = combatTickWithSkills(member, target, skillDb);
+    if (skillProvider) {
+      const result = combatTickWithSkills(member, target, skillProvider);
       if (!target.isAlive) {
         expGained += EXP_PER_KILL;
         member.addExp(EXP_PER_KILL);

@@ -1,7 +1,7 @@
-import { MapDatabase, GameMap } from './maps';
-import { FarmArea } from './autoFarm';
+import { MapDatabase, GameMap } from '../systems/maps';
+import { FarmArea } from '../systems/autoFarm';
 import { Monster } from '../entities/monster';
-import { DropTable } from './loot';
+import { DropTable } from '../systems/loot';
 
 export function createGameMaps(): MapDatabase {
   const db = new MapDatabase();

@@ -5,6 +5,11 @@ import { Inventory } from './inventory';
 import { MapDatabase, GameMap } from './maps';
 import { autoFarmTickWithLoot, LootResult } from './autoFarm';
 import { Shop } from './shop';
+import { Skill } from './skills';
+
+export interface SkillProvider {
+  getUnlockedSkills(character: { level: number; class: CharacterClass }): Skill[];
+}
 
 export class GameSession {
   private _db: MapDatabase;
@@ -54,10 +59,10 @@ export class GameSession {
     this._team.add(char);
   }
 
-  farmTick(): LootResult {
+  farmTick(skillProvider?: SkillProvider): LootResult {
     if (!this._currentMap?.areas?.length) return { loot: [], expGained: 0 };
     const area = this._currentMap.areas[0];
-    return autoFarmTickWithLoot(this._team, area, this._inventory, this._itemResolver);
+    return autoFarmTickWithLoot(this._team, area, this._inventory, this._itemResolver, skillProvider);
   }
 
   buyItem(itemId: string): void {
