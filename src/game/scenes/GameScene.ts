@@ -9,6 +9,7 @@ import { ItemDatabase } from '../data/itemDatabase';
 import { ClassSkillDatabase } from '../data/classSkills';
 import { getHealthBarColor } from '../systems/healthBar';
 import { StatsPanel } from '../ui/StatsPanel';
+import { MapSelectorUI } from '../ui/MapSelectorUI';
 
 const TEAM_SPRITES = ['character_dk', 'character_dw'];
 const MONSTER_SPRITE = 'monster_goblin';
@@ -20,6 +21,8 @@ export class GameScene extends Phaser.Scene {
   private farmTimer: number = 0;
   private combatText!: Phaser.GameObjects.Text;
   private statsPanel!: StatsPanel;
+  private mapSelector!: MapSelectorUI;
+  private goldText!: Phaser.GameObjects.Text;
   private teamSprites: { image: Phaser.GameObjects.Image; hpBar: Phaser.GameObjects.Graphics }[] = [];
   private monsterImages: Phaser.GameObjects.Image[] = [];
 
@@ -77,6 +80,27 @@ export class GameScene extends Phaser.Scene {
     this.combatText = this.add.text(25, GAME_HEIGHT - 150, '', {
       fontSize: '11px', color: '#ccffcc', fontFamily: 'monospace',
       wordWrap: { width: GAME_WIDTH - 50 },
+    });
+
+    // Gold display
+    this.goldText = this.add.text(GAME_WIDTH - 15, 15, '💰 0', {
+      fontSize: '14px', color: '#ffdd44', fontFamily: 'Arial', fontStyle: 'bold',
+    }).setOrigin(1, 0);
+
+    // Map selector
+    const maps = [
+      { id: 'brave', name: 'Brave Grounds', level: 1 },
+      { id: 'skeleton_dungeon', name: 'Skeleton Dungeon', level: 5 },
+      { id: 'giant_peak', name: "Giant's Peak", level: 10 },
+      { id: 'dragon_valley', name: 'Dragon Valley', level: 20 },
+    ];
+    this.mapSelector = new MapSelectorUI(this, 15, 45);
+    this.mapSelector.updateMaps(
+      maps.map(m => ({ ...m, unlocked: true })),
+      'brave',
+    );
+    this.mapSelector.onMapSwitch((id) => {
+      this.log(`📍 Switched to ${maps.find(m => m.id === id)?.name}`);
     });
 
     this.refreshAll();
@@ -172,6 +196,7 @@ export class GameScene extends Phaser.Scene {
     const char = this.session.getTeamMember(0);
     this.statsPanel.updateStats(char.stats, char.totalAttackPower, char.totalDefense,
       char.level, char.resetCount, char.availableStatPoints);
+    this.goldText.setText(`💰 ${char.gold}`);
 
     // Update HP bars
     this.teamSprites.forEach((s, i) => {
