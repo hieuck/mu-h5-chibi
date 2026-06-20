@@ -55,16 +55,17 @@ export class Equipment {
   readonly name: string;
   readonly slot: EquipmentSlot;
   readonly tier: ItemTier;
-  readonly attackPower: number;
-  readonly defense: number;
-  readonly requiredLevel: number;
+  attackPower: number;
+  defense: number;
+  requiredLevel: number;
   readonly requiredStats: RequiredStats;
   readonly statBonuses: Partial<BaseStats> | undefined;
   readonly set: string | undefined;
   readonly requiredClass: string | undefined;
   readonly attackPowerPercent: number;
   readonly hpBonus: number;
-  readonly value: number;
+  value: number;
+  enhanceLevel: number = 0;
 
   constructor(
     slot: EquipmentSlot,
@@ -90,6 +91,29 @@ export class Equipment {
 
   get tierColor(): string {
     return TIER_COLORS[this.tier];
+  }
+
+  get enhanceDisplay(): string {
+    return this.enhanceLevel > 0 ? `+${this.enhanceLevel}` : '';
+  }
+
+  enhance(): void {
+    const MAX_ENHANCE = 15;
+    if (this.enhanceLevel >= MAX_ENHANCE) {
+      throw new Error('Max enhance level reached');
+    }
+
+    const atkBonus = this.enhanceLevel < 9 ? 3 : 6;
+    const defBonus = this.enhanceLevel < 9 ? 6 : 12;
+
+    this.attackPower += atkBonus;
+    this.defense += defBonus;
+    this.enhanceLevel++;
+    this.value = Math.floor(this.value * 1.3);
+
+    if (this.enhanceLevel % 3 === 0) {
+      this.requiredLevel += 1;
+    }
   }
 }
 
