@@ -59,7 +59,7 @@ export class Equipment {
   defense: number;
   requiredLevel: number;
   readonly requiredStats: RequiredStats;
-  readonly statBonuses: Partial<BaseStats> | undefined;
+  statBonuses: Partial<BaseStats> | undefined;
   readonly set: string | undefined;
   readonly requiredClass: string | undefined;
   readonly attackPowerPercent: number;
@@ -91,6 +91,29 @@ export class Equipment {
 
   get tierColor(): string {
     return TIER_COLORS[this.tier];
+  }
+
+  readonly sockets: string[] = [];
+
+  get maxSockets(): number {
+    if (this.tier === ItemTier.Ancient || this.tier === ItemTier.Mythic) return 3;
+    if (this.tier === ItemTier.Set || this.tier === ItemTier.Rare) return 2;
+    if (this.tier === ItemTier.Magic) return 1;
+    return 0;
+  }
+
+  get socketCount(): number {
+    return this.sockets.length;
+  }
+
+  addSocket(stat: string): void {
+    if (this.sockets.length >= this.maxSockets) {
+      throw new Error('No free sockets');
+    }
+    this.sockets.push(stat);
+    const bonus = 4;
+    if (!this.statBonuses) this.statBonuses = {};
+    this.statBonuses[stat as keyof BaseStats] = (this.statBonuses[stat as keyof BaseStats] || 0) + bonus;
   }
 
   get enhanceDisplay(): string {
