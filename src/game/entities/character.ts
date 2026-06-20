@@ -33,6 +33,7 @@ export class Character {
   experience: number = 0;
   stats: BaseStats;
   hp: number;
+  mp: number;
   gold: number = 0;
   private _unspentStatPoints: number = 0;
   private _equipment: Map<string, Equipment> = new Map();
@@ -43,6 +44,7 @@ export class Character {
     this.class = options.class;
     this.stats = { ...BASE_STATS[options.class] };
     this.hp = this.maxHp;
+    this.mp = this.maxMp;
   }
 
   get maxHp(): number {
@@ -51,6 +53,18 @@ export class Character {
       bonus += item.hpBonus;
     }
     return this.stats.stamina * 10 + this.level * 5 + bonus;
+  }
+
+  get maxMp(): number {
+    return this.stats.energy * 5 + this.level * 2;
+  }
+
+  canCast(skill: { manaCost: number }): boolean {
+    return this.mp >= skill.manaCost;
+  }
+
+  useMana(amount: number): void {
+    this.mp = Math.max(0, this.mp - amount);
   }
 
   get resetCount(): number {
