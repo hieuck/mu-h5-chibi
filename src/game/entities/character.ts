@@ -1,5 +1,6 @@
 import { BaseStats, StatName } from '../types';
 import { Equipment, EquipmentSlot } from './equipment';
+import { Pet } from './pet';
 
 export enum CharacterClass {
   DarkKnight = 'darkKnight',
@@ -35,6 +36,7 @@ export class Character {
   hp: number;
   mp: number;
   gold: number = 0;
+  pet: Pet | null = null;
   private _unspentStatPoints: number = 0;
   private _equipment: Map<string, Equipment> = new Map();
   private _resetCount: number = 0;
@@ -153,6 +155,10 @@ export class Character {
     this.stats.agility += 5;
     this.stats.stamina += 5;
     this.stats.energy += 5;
+  }
+
+  equipPet(pet: Pet): void {
+    this.pet = pet;
   }
 
   private _applyStatBonuses(item: Equipment, adding: boolean): void {
