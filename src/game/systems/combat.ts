@@ -23,6 +23,13 @@ export function calculateDamage(attacker: Character, defender: Monster): number 
   return Math.max(1, Math.floor(baseDamage * reduction));
 }
 
+export function calculateCritDamage(attacker: Character, defender: Monster): { damage: number; isCrit: boolean } {
+  const base = calculateDamage(attacker, defender);
+  const critChance = attacker.stats.agility * 0.002;
+  const isCrit = Math.random() < critChance;
+  return { damage: isCrit ? Math.floor(base * 1.5) : base, isCrit };
+}
+
 export function calculateSkillDamage(attacker: Character, defender: Monster, skill: Skill): number {
   return Math.floor(calculateDamage(attacker, defender) * skill.damageMultiplier);
 }
@@ -30,6 +37,7 @@ export function calculateSkillDamage(attacker: Character, defender: Monster, ski
 export interface CombatTickResult {
   damage: number;
   skillUsed: boolean;
+  isCrit: boolean;
 }
 
 export function combatTickWithSkills(attacker: Character, defender: Monster, skillDb: { getUnlockedSkills: (char: Character) => Skill[] }): CombatTickResult {
@@ -37,17 +45,26 @@ export function combatTickWithSkills(attacker: Character, defender: Monster, ski
   const bestSkill = availableSkills.length > 0 ? availableSkills[0] : undefined;
 
   if (bestSkill) {
-    const damage = calculateSkillDamage(attacker, defender, bestSkill);
+    const base = calculateSkillDamage(attacker, defender, bestSkill);
+    const { damage, isCrit } = applyCrit(attacker, base);
     defender.takeDamage(damage);
     attacker.useMana(bestSkill.manaCost);
-    return { damage, skillUsed: true };
+    return { damage, skillUsed: true, isCrit };
   }
 
-  return { damage: attack(attacker, defender), skillUsed: false };
+  return { damage: attack(attacker, defender), skillUsed: false, isCrit: false };
+}
+
+function applyCrit(attacker: Character, damage: number): { damage: number; isCrit: boolean } {
+  const critChance = attacker.stats.agility * 0.002;
+  if (Math.random() < critChance) {
+    return { damage: Math.floor(damage * 1.5), isCrit: true };
+  }
+  return { damage, isCrit: false };
 }
 
 export function attack(attacker: Character, defender: Monster): number {
-  const damage = calculateDamage(attacker, defender);
+  const { damage } = calculateCritDamage(attacker, defender);
   defender.takeDamage(damage);
   return damage;
 }

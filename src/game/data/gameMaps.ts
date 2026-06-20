@@ -4,7 +4,7 @@ import { Monster } from '../entities/monster';
 import { DropTable } from '../systems/loot';
 import { BossEncounter } from '../systems/bossEncounter';
 
-export function createGameMaps(): MapDatabase {
+export function createGameMaps(): { db: MapDatabase; bosses: BossEncounter[] } {
   const db = new MapDatabase();
 
   // ── Map 1: Brave Grounds (Lv 1-7) ──
