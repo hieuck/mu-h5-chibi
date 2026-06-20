@@ -1,8 +1,9 @@
 import { Team } from './team';
 import { Monster } from '../entities/monster';
-import { calculateDamage } from './combat';
+import { calculateDamage, combatTickWithSkills } from './combat';
 import { Inventory } from './inventory';
 import { Equipment } from '../entities/equipment';
+import { SkillDatabase } from './skills';
 
 export interface FarmAreaOptions {
   name: string;
@@ -46,7 +47,7 @@ export class FarmArea {
   }
 }
 
-export function autoFarmTick(team: Team, area: FarmArea): number {
+export function autoFarmTick(team: Team, area: FarmArea, skillDb?: SkillDatabase): number {
   let expGained = 0;
 
   for (const member of team.members) {
@@ -56,12 +57,20 @@ export function autoFarmTick(team: Team, area: FarmArea): number {
     if (aliveMonsters.length === 0) break;
 
     const target = aliveMonsters[0];
-    const damage = calculateDamage(member, target);
-    target.takeDamage(damage);
 
-    if (!target.isAlive) {
-      expGained += EXP_PER_KILL;
-      member.addExp(EXP_PER_KILL);
+    if (skillDb) {
+      const result = combatTickWithSkills(member, target, skillDb);
+      if (!target.isAlive) {
+        expGained += EXP_PER_KILL;
+        member.addExp(EXP_PER_KILL);
+      }
+    } else {
+      const damage = calculateDamage(member, target);
+      target.takeDamage(damage);
+      if (!target.isAlive) {
+        expGained += EXP_PER_KILL;
+        member.addExp(EXP_PER_KILL);
+      }
     }
   }
 
@@ -82,6 +91,7 @@ export function autoFarmTickWithLoot(
   area: FarmArea,
   inventory: Inventory,
   itemResolver?: (itemId: string) => Equipment | undefined,
+  skillDb?: SkillDatabase,
 ): LootResult {
   const loot: string[] = [];
   let expGained = 0;
@@ -91,18 +101,31 @@ export function autoFarmTickWithLoot(
     const aliveMonsters = area.monsters.filter(m => m.isAlive);
     if (aliveMonsters.length === 0) break;
     const target = aliveMonsters[0];
-    const damage = calculateDamage(member, target);
-    target.takeDamage(damage);
-    if (!target.isAlive) {
-      expGained += EXP_PER_KILL;
-      member.addExp(EXP_PER_KILL);
-      if (itemResolver && target.dropTable) {
-        const drop = target.dropTable.roll(Math.random());
-        if (drop && !inventory.isFull) {
-          const item = itemResolver(drop);
-          if (item) {
-            inventory.add(item);
-            loot.push(drop);
+
+    if (skillDb) {
+      const result = combatTickWithSkills(member, target, skillDb);
+      if (!target.isAlive) {
+        expGained += EXP_PER_KILL;
+        member.addExp(EXP_PER_KILL);
+        if (itemResolver && target.dropTable) {
+          const drop = target.dropTable.roll(Math.random());
+          if (drop && !inventory.isFull) {
+            const item = itemResolver(drop);
+            if (item) { inventory.add(item); loot.push(drop); }
+          }
+        }
+      }
+    } else {
+      const damage = calculateDamage(member, target);
+      target.takeDamage(damage);
+      if (!target.isAlive) {
+        expGained += EXP_PER_KILL;
+        member.addExp(EXP_PER_KILL);
+        if (itemResolver && target.dropTable) {
+          const drop = target.dropTable.roll(Math.random());
+          if (drop && !inventory.isFull) {
+            const item = itemResolver(drop);
+            if (item) { inventory.add(item); loot.push(drop); }
           }
         }
       }
