@@ -11,6 +11,7 @@ import { getHealthBarColor } from '../systems/healthBar';
 import { StatsPanel } from '../ui/StatsPanel';
 import { MapSelectorUI } from '../ui/MapSelectorUI';
 import { InventoryUI } from '../ui/InventoryUI';
+import { FloatingDamage } from '../systems/floatingDamage';
 
 const TEAM_CONFIG = [
   { sprite: 'character_dk', name: 'DK' },
@@ -36,6 +37,7 @@ export class GameScene extends Phaser.Scene {
   private goldText!: Phaser.GameObjects.Text;
   private teamSprites: { img: Phaser.GameObjects.Image; hpBar: Phaser.GameObjects.Graphics; name: string }[] = [];
   private monsterImages: Phaser.GameObjects.Image[] = [];
+  private floatingDamage!: FloatingDamage;
   private bgImage?: Phaser.GameObjects.Image;
 
   constructor() {
@@ -109,10 +111,10 @@ export class GameScene extends Phaser.Scene {
           try {
             const old = char.equip(item);
             this.session.getInventory().remove(index);
-            this.log(`🔄 Equipped ${item.name}`);
+            this.logMsg(`🔄 Equipped ${item.name}`);
             if (old) this.session.getInventory().add(old);
           } catch (e: any) {
-            this.log(`⚠️ ${e.message}`);
+            this.logMsg(`⚠️ ${e.message}`);
           }
           this.inventoryUI.refresh(this.session.getInventory());
           this.refreshAll();
@@ -131,6 +133,9 @@ export class GameScene extends Phaser.Scene {
       fontSize: '10px', color: '#ccffcc', fontFamily: 'monospace',
       wordWrap: { width: GAME_WIDTH - 50 },
     });
+
+    // Floating damage numbers
+    this.floatingDamage = new FloatingDamage(this);
 
     this.refreshAll();
     this.scene.launch(SCENE_KEYS.HUD);
@@ -204,16 +209,20 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, delta: number): void {
+    this.floatingDamage.update(delta);
     this.farmTimer += delta;
     if (this.farmTimer >= 2000) {
       this.farmTimer = 0;
       const result = this.session.farmTick(this.classSkills);
       if (result.expGained > 0) {
-        this.log('⚔ Monster defeated! +50 EXP');
+        this.logMsg('⚔ Monster defeated! +50 EXP');
         this.flashTeam();
+        this.floatingDamage.show(GAME_WIDTH - 160, GAME_HEIGHT / 2 - 60, 50, false);
+        this.floatingDamage.showGold(GAME_WIDTH - 160, GAME_HEIGHT / 2 - 80, 10);
       }
       if (result.loot.length > 0) {
-        this.log(`📦 ${result.loot.join(', ')}`);
+        this.logMsg(`📦 ${result.loot.join(', ')}`);
+        this.floatingDamage.showDrop(GAME_WIDTH - 160, GAME_HEIGHT / 2 - 100, result.loot[0], 'rare');
       }
       this.refreshAll();
     }
@@ -226,6 +235,8 @@ export class GameScene extends Phaser.Scene {
       }
     });
   }
+
+  private lastLevel: number = 1;
 
   private refreshAll(): void {
     const leader = this.session.getTeamMember(1);
@@ -249,11 +260,19 @@ export class GameScene extends Phaser.Scene {
         s.hpBar.fillRect(barX + 1, barY + 1, 42 * pct, 2);
       }
     });
+
+    // Level up check
+    if (leader.level > this.lastLevel) {
+      const diff = leader.level - this.lastLevel;
+      this.logMsg(`⬆ UP! +${diff} Lv.${leader.level}`);
+      this.floatingDamage.show(GAME_WIDTH / 2, GAME_HEIGHT / 2, leader.level, true);
+      this.lastLevel = leader.level;
+    }
   }
 
-  private log(msg: string): void {
+  private logMsg(msg: string): void {
     this.logLines.push(msg);
-    if (this.logLines.length > 8) this.logLines.shift();
+    if (this.logLines.length > 10) this.logLines.shift();
     this.combatText.setText(this.logLines.join('\n'));
   }
 }
