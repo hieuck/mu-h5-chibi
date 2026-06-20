@@ -2,6 +2,7 @@ import { MapDatabase, GameMap } from '../systems/maps';
 import { FarmArea } from '../systems/autoFarm';
 import { Monster } from '../entities/monster';
 import { DropTable } from '../systems/loot';
+import { BossEncounter } from '../systems/bossEncounter';
 
 export function createGameMaps(): MapDatabase {
   const db = new MapDatabase();
@@ -72,5 +73,48 @@ export function createGameMaps(): MapDatabase {
   });
   db.register(new GameMap({ id: 'dragon_valley', name: '🐉 Dragon Valley', requiredLevel: 20, areas: [dragonArea] }));
 
-  return db;
+  // ── Map 5: Abyss (Lv 30+) ──
+  const abyssArea = new FarmArea({
+    name: 'Abyss Floor',
+    monsters: [
+      Object.assign(new Monster({ name: 'Fallen Angel', hp: 600, defense: 50, level: 30 }), {
+        dropTable: new DropTable({ entries: [{ itemId: 'legendary_sword', chance: 0.12 }, { itemId: 'pendant_of_life', chance: 0.1 }] }),
+      }),
+      Object.assign(new Monster({ name: 'Dark Elf', hp: 450, defense: 40, level: 32 }), {
+        dropTable: new DropTable({ entries: [{ itemId: 'dw_armor', chance: 0.1 }, { itemId: 'dragon_boots', chance: 0.12 }] }),
+      }),
+      Object.assign(new Monster({ name: 'Abyss Guardian', hp: 800, defense: 60, level: 35 }), {
+        dropTable: new DropTable({ entries: [{ itemId: 'dk_armor', chance: 0.08 }, { itemId: 'dragon_armor', chance: 0.06 }] }),
+      }),
+    ],
+    recommendedLevel: 30,
+  });
+  db.register(new GameMap({ id: 'abyss', name: '🌌 Abyss', requiredLevel: 30, areas: [abyssArea] }));
+
+  // ── Boss Encounters ──
+  const bosses = [
+    new BossEncounter({
+      boss: Object.assign(new Monster({ name: 'Goblin King', hp: 300, defense: 15, level: 10 }), {
+        dropTable: new DropTable({ entries: [{ itemId: 'battle_axe', chance: 0.5 }, { itemId: 'ring_of_strength', chance: 0.3 }] }),
+      }),
+      requiredLevel: 5, area: 'brave', goldReward: 200,
+      abilities: ['Summon Minions', 'Berserk'],
+    }),
+    new BossEncounter({
+      boss: Object.assign(new Monster({ name: 'Skeleton Lord', hp: 600, defense: 30, level: 18 }), {
+        dropTable: new DropTable({ entries: [{ itemId: 'doom_blade', chance: 0.4 }, { itemId: 'adamantine_armor', chance: 0.25 }] }),
+      }),
+      requiredLevel: 15, area: 'skeleton_dungeon', goldReward: 500,
+      abilities: ['Bone Shield', 'Dark Curse'],
+    }),
+    new BossEncounter({
+      boss: Object.assign(new Monster({ name: 'Dragon King', hp: 2000, defense: 60, level: 35 }), {
+        dropTable: new DropTable({ entries: [{ itemId: 'legendary_sword', chance: 0.3 }, { itemId: 'dragon_armor', chance: 0.2 }, { itemId: 'pendant_of_life', chance: 0.15 }] }),
+      }),
+      requiredLevel: 30, area: 'dragon_valley', goldReward: 2000,
+      abilities: ['Fire Breath', 'Tail Swipe', 'Fear Roar'],
+    }),
+  ];
+
+  return { db, bosses };
 }

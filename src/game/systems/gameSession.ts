@@ -45,6 +45,7 @@ export class GameSession {
   getGold(): number { return this._team.members[0]?.gold ?? 0; }
   getTeam(): Team { return this._team; }
   getTeamMember(index: number): Character { return this._team.members[index]; }
+  getInventory(): Inventory { return this._inventory; }
 
   addCharacter(name: string, className: string): void {
     const classMap: Record<string, CharacterClass> = {

@@ -10,6 +10,7 @@ import { ClassSkillDatabase } from '../data/classSkills';
 import { getHealthBarColor } from '../systems/healthBar';
 import { StatsPanel } from '../ui/StatsPanel';
 import { MapSelectorUI } from '../ui/MapSelectorUI';
+import { InventoryUI } from '../ui/InventoryUI';
 
 const TEAM_SPRITES = ['character_dk', 'character_dw'];
 const MONSTER_SPRITE = 'monster_goblin';
@@ -22,6 +23,7 @@ export class GameScene extends Phaser.Scene {
   private combatText!: Phaser.GameObjects.Text;
   private statsPanel!: StatsPanel;
   private mapSelector!: MapSelectorUI;
+  private inventoryUI!: InventoryUI;
   private goldText!: Phaser.GameObjects.Text;
   private teamSprites: { image: Phaser.GameObjects.Image; hpBar: Phaser.GameObjects.Graphics }[] = [];
   private monsterImages: Phaser.GameObjects.Image[] = [];
@@ -101,6 +103,29 @@ export class GameScene extends Phaser.Scene {
     );
     this.mapSelector.onMapSwitch((id) => {
       this.log(`📍 Switched to ${maps.find(m => m.id === id)?.name}`);
+    });
+
+    // Inventory UI
+    this.inventoryUI = new InventoryUI(this, GAME_WIDTH / 2 - 130, GAME_HEIGHT / 2 - 160);
+
+    // Keyboard: I = inventory
+    this.input.keyboard!.on('keydown-I', () => {
+      this.inventoryUI.toggle();
+      if (this.inventoryUI.isVisible) {
+        this.inventoryUI.refresh(this.session.getInventory(), (item, index) => {
+          const char = this.session.getTeamMember(0);
+          try {
+            const old = char.equip(item);
+            this.session.getInventory().remove(index);
+            this.log(`🔄 Equipped ${item.name}`);
+            if (old) this.session.getInventory().add(old);
+          } catch (e: any) {
+            this.log(`⚠️ ${e.message}`);
+          }
+          this.inventoryUI.refresh(this.session.getInventory());
+          this.refreshAll();
+        });
+      }
     });
 
     this.refreshAll();
