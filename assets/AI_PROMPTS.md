@@ -1,10 +1,58 @@
-# MU Chibi Squad - AI Asset Generation Prompts
+# MU Chibi Squad - AI Asset Generation
 
-## Công cụ khuyến nghị
+## ⚡ ComfyUI (Local, khuyến nghị)
 
-- **Stable Diffusion** (free, local) với model: Anything V5 / Counterfeit / NAI
-- **Midjourney** ($10-30/th) - best quality, consistent style
-- **DALL-E 3** - tốt cho item icons, UI
+### Cài đặt
+```bash
+# ComfyUI đã có sẵn. Chạy với API mode:
+python main.py --listen 127.0.0.1 --port 8188 --enable-cors-header
+```
+
+### Gen toàn bộ assets
+```bash
+cd mu-h5-chibi
+python scripts/comfy_gen.py --host 127.0.0.1 --port 8188 --all
+```
+
+### Kiểm tra kết nối
+```bash
+python scripts/comfy_test.py 127.0.0.1 8188
+```
+
+### Gen theo category
+```bash
+# Chỉ gen characters
+python scripts/comfy_gen.py --category character
+
+# Chỉ gen monsters
+python scripts/comfy_gen.py --category monster
+
+# Gen với seed cố định (cùng 1 style)
+python scripts/comfy_gen.py --all --seed 42
+```
+
+### Gen placeholder (không cần ComfyUI)
+```bash
+python scripts/comfy_gen.py --all --placeholder
+python scripts/gen_placeholders.py
+```
+
+### Tùy chỉnh model
+```bash
+# Dùng model khác (phải có trong ComfyUI/models/checkpoints/)
+python scripts/comfy_gen.py --model "animagine-xl-3.1.safetensors" --all
+```
+
+### Script tự động gen từng asset:
+- `scripts/comfy_gen.py` — Gen qua ComfyUI API, auto fallback placeholder
+- `scripts/comfy_test.py` — Kiểm tra kết nối ComfyUI
+- `scripts/gen_placeholders.py` — Gen hình khối màu (không cần AI)
+
+## Công cụ khác
+
+- **Stable Diffusion** (manual): Dùng prompt bên dưới
+- **Midjourney**: Copy prompt → paste → upscale → export PNG
+- **DALL-E 3**: Tốt cho item icons, UI elements
 
 ## Style Guidelines
 
