@@ -4,6 +4,7 @@ import { calculateDamage, combatTickWithSkills } from './combat';
 import { Inventory } from './inventory';
 import { Equipment } from '../entities/equipment';
 import { Skill } from './skills';
+import { applyRegen } from './regen';
 
 export interface SkillProvider {
   getUnlockedSkills(character: { level: number; class: any }): Skill[];
@@ -53,6 +54,9 @@ export class FarmArea {
 
 export function autoFarmTick(team: Team, area: FarmArea, skillProvider?: SkillProvider): number {
   let expGained = 0;
+
+  // Apply passive regen before combat
+  applyRegen(team);
 
   for (const member of team.members) {
     if (!member.hp) continue;
