@@ -142,3 +142,6 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
+
+# Large AI model files
+scripts/*.safetensors
