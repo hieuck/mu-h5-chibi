@@ -13,7 +13,7 @@
 - **Default Branch:** main
 
 ## Current Stage
-**Production** — active implementation. All P0 systems are reverse-documented in per-system GDDs, engine and save architecture decisions are recorded as ADRs, and `CLAUDE.md` placeholders are filled. Source code contains 40+ game files across scenes, systems, entities, UI, and data. Test suite covers 306 tests across 51 suites.
+**Production** — active implementation. All P0 and major secondary systems are reverse-documented in per-system GDDs. Engine and save architecture decisions are recorded as ADRs. `CLAUDE.md` placeholders are filled. Source code contains 40+ game files across scenes, systems, entities, UI, and data. Test suite covers 306 tests across 51 suites.
 
 ## Known Technical Decisions
 - **Line endings:** LF enforced via `.gitattributes`; `core.autocrlf=false` set locally to prevent Windows CRLF conversion of shell hooks.
@@ -39,6 +39,10 @@ design/
     team-system.md         # Reverse-documented squad management
     loot-economy-system.md # Reverse-documented drops/gold/shop/inventory
     boss-encounter-system.md # Reverse-documented boss fights
+    pet-system.md          # Reverse-documented pet bonuses
+    wings-system.md        # Reverse-documented class wings
+    guild-system.md        # Reverse-documented guild progression
+    daily-quest-system.md  # Reverse-documented daily quests
   registry/
     entities.yaml          # Populated: 12 monsters, 3 bosses, 48 items, 4 formulas, 4 constants
 production/
@@ -57,13 +61,15 @@ src/
 ```
 
 ## Identified Gaps
-1. Some advanced systems exist only in code/tests without GDDs (pets, wings, guild, daily quests, achievements, sound).
-2. Cloud save backend not implemented.
+1. Cloud save backend not implemented (post-MVP).
+2. Open PR #2 from `ecc-tools/mu-h5-chibi-1783556141539` requires review.
+3. Some niche systems exist only in code/tests without GDDs (achievements, sound, map backgrounds).
 
 ## Next Recommended Work
-1. Reverse-document remaining secondary systems (pets, wings, guild, daily quests) as time allows.
+1. Review and resolve open PR #2.
 2. Implement cloud save backend post-MVP.
-3. Continue polish and balance passes on core loop.
+3. Reverse-document achievements and sound systems if needed.
+4. Continue polish and balance passes on core loop.
 
 ## Recent Cycle Notes
 - 2026-07-09 (Cycle 1): Fixed recurring CRLF hook failures, enabled autonomy, created MEMORY.md and stage report, created systems index, reverse-documented Combat and Auto-Farm systems, and implemented `SaveLoadManager` (PRs #1, #3, #4, #5, #6, #7).
@@ -71,6 +77,7 @@ src/
 - 2026-07-09 (Cycle 3): Updated MEMORY.md and second cycle log, reverse-documented Character Progression System, and implemented offline progression simulation (PRs #11, #12, #13).
 - 2026-07-09 (Cycle 4): Reverse-documented Equipment, Skill, Team, Loot/Economy, and Boss Encounter systems (PRs #15, #16, #17, #18, #19).
 - 2026-07-09 (Cycle 5): Authored ADR-001 and ADR-002, filled `CLAUDE.md` placeholders, and updated MEMORY.md (PRs #21, #22, #23, #24).
+- 2026-07-09 (Cycle 6): Reverse-documented secondary systems (Pets, Wings, Guild, Daily Quests) and updated MEMORY.md (PR #25, #26).
 
 ## Pull Requests Merged
 - #1 chore: enforce LF line endings and enable autonomy
@@ -93,3 +100,5 @@ src/
 - #21 docs: add ADR-001 engine and language stack
 - #22 docs: add ADR-002 save architecture
 - #23 docs: fill CLAUDE.md engine and language placeholders
+- #24 docs: update MEMORY.md with ADRs and CLAUDE.md placeholders
+- #25 docs: add secondary system GDDs (pets, wings, guild, daily quests)
