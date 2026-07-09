@@ -43,6 +43,7 @@ interface SavedGameSession {
   characters: SavedCharacter[];
   inventory: SavedEquipment[];
   currentMapId: string;
+  savedAt?: number;
 }
 
 export class SaveLoadManager {
@@ -57,6 +58,7 @@ export class SaveLoadManager {
       characters: session.getTeam().members.map(char => this._serializeCharacter(char)),
       inventory: session.getInventory().list().map(item => this._serializeEquipment(item)),
       currentMapId: session.currentMapId,
+      savedAt: Date.now(),
     };
     return JSON.stringify(data);
   }
@@ -100,6 +102,17 @@ export class SaveLoadManager {
     if (!raw) return undefined;
     try {
       return this.deserialize(raw);
+    } catch {
+      return undefined;
+    }
+  }
+
+  loadFromStorageWithTimestamp(): { session: GameSession; savedAt: number | undefined } | undefined {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return undefined;
+    try {
+      const data: SavedGameSession = JSON.parse(raw);
+      return { session: this.deserialize(raw), savedAt: data.savedAt };
     } catch {
       return undefined;
     }
