@@ -1,89 +1,83 @@
-# Project Memory — MU Chibi Squad
+# Project Memory: MU Chibi Squad
 
-## Identity
+## Last Updated
+2026-07-09
 
-| Field | Value |
-| ---- | ---- |
-| **Repository** | https://github.com/hieuck/mu-h5-chibi |
-| **Game Title** | MU Chibi Squad |
-| **Genre** | Idle ARPG / Team Management / Auto-Battler |
-| **Inspiration** | MU Online (equipment, wings, reset, class fantasy) |
-| **Engine** | Phaser 4 |
-| **Language** | TypeScript |
-| **Build Tool** | Vite |
-| **Platform** | HTML5 (H5) — web primary, mobile/desktop future |
-| **Default Branch** | `main` |
-| **Current Stage** | Production (active implementation) |
-| **Package** | `mu-chibi-squad` v1.0.0 |
+## Project Identity
+- **Name:** MU Chibi Squad
+- **Genre:** Idle ARPG / Team Management / Auto-Battler
+- **Inspiration:** MU Online
+- **Engine:** Phaser 4 + TypeScript + Vite
+- **Platform:** HTML5 (H5) primary; mobile and Steam future
+- **Repository:** https://github.com/hieuck/mu-h5-chibi
+- **Default Branch:** main
 
-## Project Snapshot
+## Current Stage
+**Production** — active implementation. Source code contains 40+ game files across scenes, systems, entities, UI, and data. Game concept doc exists. Systems are implemented in code and progressively being reverse-documented.
 
-Last memory refresh: 2026-07-09
+## Known Technical Decisions
+- **Line endings:** LF enforced via `.gitattributes`; `core.autocrlf=false` set locally to prevent Windows CRLF conversion of shell hooks.
+- **Autonomy:** Full-continuous autonomous mode enabled via `.kimchi/AUTONOMY.md`.
+- **Test framework:** Jest with jsdom environment, TypeScript via ts-jest.
+- **Build:** Vite for dev server; `tsc` for type checking.
+- **Persistence:** `SaveLoadManager` + `GameSessionPersistence` use `localStorage`; cloud save deferred post-MVP.
 
-### Source Code (`src/game/`)
+## Directory Snapshot
+```
+design/
+  gdd/
+    game-concept.md        # Game concept (Draft, 2026-06-20)
+    combat-system.md       # Reverse-documented combat rules
+    auto-farm-system.md    # Reverse-documented idle loop
+  registry/
+    entities.yaml          # Populated: 12 monsters, 3 bosses, 48 items, 4 formulas, 4 constants
+docs/
+  architecture/
+    tr-registry.yaml       # Traceability registry
+production/
+  sprint-plan.md           # Sprint 1: MVP Foundation (2026-07-09 → 2026-07-23)
+src/
+  game/
+    main.ts                # DOM entry point
+    phaserGame.ts          # Phaser game config
+    scenes/                # BootScene, GameScene, HUDScene
+    systems/               # 25+ systems (combat, autoFarm, loot, team, etc.)
+    entities/              # character, equipment, monster, pet, wings
+    ui/                    # InventoryUI, MapSelectorUI, StatsPanel
+    data/                  # classSkills, gameMaps, itemDatabase, mapBackgrounds
+  tests/                   # 50+ test files covering most systems
+```
 
-- **Entry**: `main.ts` bootstraps `phaserGame.ts`.
-- **Scenes**: `BootScene.ts`, `GameScene.ts`, `HUDScene.ts`.
-- **Systems** (22 files): assetLoader, assetManifest, autoFarm, bossEncounter, combat, dailyQuests, floatingDamage, gameRenderer, gameSession, guild, healthBar, inventory, loot, maps, regen, setBonuses, shop, skills, soundSystem, spriteRenderer, team, visualRenderData.
-- **Entities**: character, equipment, monster, pet, wings.
-- **UI**: InventoryUI, MapSelectorUI, StatsPanel.
-- **Data**: classSkills, gameMaps, itemDatabase, mapBackgrounds.
+## Identified Gaps
+1. Several P0 systems still lack per-system GDDs:
+   - Character Progression
+   - Equipment (enhancement, sockets, sets, wings)
+   - Skill System
+   - Team / Squad
+   - Loot and Economy
+   - Boss Encounters
+2. No architecture overview or ADRs for engine choice and save architecture.
+3. `CLAUDE.md` engine/language placeholders still not filled.
+4. Offline progression simulation not implemented.
+5. Cloud save backend not implemented.
 
-### Tests (`src/tests/`)
+## Next Recommended Work
+1. Continue reverse-documenting P0 systems, starting with Character Progression and Equipment.
+2. Author ADRs for Phaser 4 + TypeScript and local-storage save architecture.
+3. Implement offline progression simulation.
+4. Fill `CLAUDE.md` engine/language selections.
 
-48 test files covering core loops: autoFarm, combat, loot, inventory, team, skills, boss encounters, daily quests, guild, shop, sets, enhancement, gems, pets, maps, game session, save/load, sound, equipment drops, character stats, and more.
+## Recent Cycle Notes
+- 2026-07-09 (Cycle 1): Fixed recurring CRLF hook failures, enabled autonomy, created MEMORY.md and stage report, created systems index, reverse-documented Combat and Auto-Farm systems, and implemented `SaveLoadManager` (PRs #1, #3, #4, #5, #6, #7).
+- 2026-07-09 (Cycle 2): Populated entity registry, integrated save/load into `GameScene`, and created Sprint 1 plan (PRs #8, #9, #10).
 
-### Design & Docs
-
-| Path | Status | Notes |
-| ---- | ---- | ---- |
-| `design/gdd/game-concept.md` | Draft, 2026-06-20 | Contains elevator pitch, MDA analysis, pillars, references. |
-| `design/registry/entities.yaml` | Scaffold | Empty lists for entities, items, formulas, constants. |
-| `docs/architecture/tr-registry.yaml` | Scaffold | Empty requirements list. |
-| `CLAUDE.md` | Out-of-date template | Engine/language placeholders still not filled. |
-
-### Recent Cycle Notes
-
-- **PR #1 merged** (`a13b273`): Fixed CRLF hook issue by adding `.gitattributes`, updating `.gitignore`, and enabling autonomy via `.kimchi/AUTONOMY.md`.
-- Mode: `full-continuous` autonomy now active.
-- Git line endings configured to LF.
-
-## Key Decisions
-
-1. **Stack**: Phaser 4 + TypeScript + Vite. Confirmed by `src/package.json`.
-2. **Idle-first combat**: Auto-farm loop is the primary moment-to-moment gameplay; manual boss encounters provide optional skill expression.
-3. **Team-based progression**: 3-4 character slots, class synergies, team stats.
-4. **MU Online homage**: Equipment tiers, wings, set bonuses, enhancement, gem sockets, reset progression.
-5. **Single-player + async social**: Guilds and daily quests exist; real-time PVP is explicitly excluded by anti-pillar.
-6. **Autonomy enabled**: Agent may self-merge PRs, deploy staging, add dependencies, and handle local secrets under guardrails.
-
-## Active Gaps
-
-- No `design/systems-index.md`.
-- No per-system GDDs beyond `game-concept.md`.
-- No active sprint plan or roadmap in `production/`.
-- `design/registry/entities.yaml` is empty — no canonical entity/item/formula/constant definitions.
-- No architecture overview or ADRs in `docs/architecture/` beyond the TR registry scaffold.
-- `CLAUDE.md` placeholders for engine/language/build system are not filled.
-- No dependency lockfile visible at repo root; package lives in `src/package.json`.
-
-## Recommended Next Work
-
-1. **Fill `CLAUDE.md` engine/language placeholders** to align studio tooling with the actual Phaser/TypeScript/Vite stack.
-2. **Create `design/systems-index.md`** listing all implemented systems and their authoritative GDD locations.
-3. **Author per-system GDDs** for combat, equipment, inventory, team, progression, economy, guild, pets, daily quests, and sound.
-4. **Populate `design/registry/entities.yaml`** with cross-referenced items, formulas, and constants from the data files.
-5. **Create baseline ADRs** for "Why Phaser 4", "Idle vs active combat split", and "Team-based vs single-character progression".
-6. **Add `production/roadmap.md`** with near-term milestones and sprint boundaries.
-7. **Align test coverage** with newly documented systems; target test-to-production LOC ratio >= 1.0 for new code.
-
-## Files This Memory Owns
-
-- `.kimchi/MEMORY.md` (this file)
-- `.kimchi/AUTONOMY.md`
-
-## Notes for Future Agents
-
-- When adding new systems, update this memory's directory snapshot and gaps list.
-- When a new GDD is created, link it here and in `design/systems-index.md` once that file exists.
-- Keep LF line endings. Do not revert to CRLF.
+## Pull Requests Merged
+- #1 chore: enforce LF line endings and enable autonomy
+- #3 docs: add project memory and baseline stage report
+- #4 docs: add systems index cataloging implemented game systems
+- #5 docs: add combat system GDD
+- #6 docs: add auto-farm system GDD
+- #7 feat: add SaveLoadManager for local session persistence
+- #8 data: populate entity registry
+- #9 feat: integrate SaveLoadManager into GameScene for auto load/save
+- #10 docs: add Sprint 1 plan for MVP foundation
