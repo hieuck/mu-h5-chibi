@@ -12,6 +12,7 @@ import { MAP_BG_COLORS } from '../data/mapBackgrounds';
 import { StatsPanel } from '../ui/StatsPanel';
 import { InventoryUI } from '../ui/InventoryUI';
 import { FloatingDamage } from '../systems/floatingDamage';
+import { GameSessionPersistence } from '../systems/gameSessionPersistence';
 
 const ALL_CLASSES = [
   { key: 'character_dk', name: 'DK', classType: 'darkKnight', color: 0xcc4444 },
@@ -44,6 +45,7 @@ export class GameScene extends Phaser.Scene {
   private statsPanel!: StatsPanel;
   private inventoryUI!: InventoryUI;
   private floatingDamage!: FloatingDamage;
+  private persistence!: GameSessionPersistence;
   private charCircles: { g: Phaser.GameObjects.Graphics; hpBar: Phaser.GameObjects.Graphics }[] = [];
   private monsterCircles: Phaser.GameObjects.Graphics[] = [];
 
@@ -54,7 +56,12 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.itemDb = new ItemDatabase();
     this.classSkills = new ClassSkillDatabase();
-    this.session = this.createFullSession();
+    this.persistence = new GameSessionPersistence(this.buildMapDb(), this.itemDb);
+    const saved = this.persistence.load();
+    this.session = saved ?? this.createFullSession();
+    if (saved) {
+      this.log('💾 Save loaded');
+    }
     this.currentMapIdx = 0;
     this.logLines = [];
     this.farmTimer = 0;
@@ -72,6 +79,12 @@ export class GameScene extends Phaser.Scene {
     this.floatingDamage = new FloatingDamage(this);
     this.refreshAll();
     this.scene.launch(SCENE_KEYS.HUD);
+
+    this.events.on('shutdown', this.saveSession, this);
+  }
+
+  saveSession(): void {
+    this.persistence.save(this.session);
   }
 
   private createFullSession(): GameSession {
@@ -239,6 +252,7 @@ export class GameScene extends Phaser.Scene {
           } catch (e: any) { this.log(`⚠ ${e.message}`); }
           this.inventoryUI.refresh(this.session.getInventory());
           this.refreshAll();
+          this.saveSession();
         });
       }
     });
@@ -246,6 +260,7 @@ export class GameScene extends Phaser.Scene {
       const char = this.session.getTeamMember(0);
       try { char.reset(); this.log(`🔄 Reset! Now Lv.1 (Reset #${char.resetCount})`); } catch (e: any) { this.log(`⚠ ${e.message}`); }
       this.refreshAll();
+      this.saveSession();
     });
     this.input.keyboard!.on('keydown-S', () => {
       const items = this.session.getInventory().list();
@@ -259,6 +274,7 @@ export class GameScene extends Phaser.Scene {
       });
       if (toSell.length > 0) this.log(`💰 Auto-sold ${toSell.length} items`);
       this.refreshAll();
+      this.saveSession();
     });
   }
 
@@ -269,6 +285,7 @@ export class GameScene extends Phaser.Scene {
     this.mapText.setText(MAPS[this.currentMapIdx].name);
     this.log(`📍 ${MAPS[this.currentMapIdx].name}`);
     this.refreshAll();
+    this.saveSession();
   }
 
   update(_time: number, delta: number): void {
