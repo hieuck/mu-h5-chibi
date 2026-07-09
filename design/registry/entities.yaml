@@ -3,166 +3,1016 @@
 # PURPOSE: Single source of truth for all named game-world facts that appear
 # in more than one document. Skills check this before writing new content to
 # detect cross-doc inconsistencies at authoring time.
-#
-# RULES:
-#   - Only register facts that cross system boundaries. Internal-only facts
-#     (a formula used in one GDD only) do NOT need to be registered.
-#   - Never delete entries — set status: deprecated instead.
-#   - When a value changes: update the value, set revised: to today's date,
-#     and add a comment with the old value and which GDD changed it.
-#   - source: is the authoritative GDD — the one that "owns" this fact.
-#     Other GDDs that reference it list themselves in referenced_by.
-#   - When a new GDD references an existing entry, append its path to
-#     referenced_by. Do not create a duplicate entry.
-#
-# WRITTEN BY: /design-system (Phase 5 — after GDD sections are approved)
-#             /consistency-check (when resolving conflicts)
-# READ BY:    /design-system (Phase 2 — before authoring begins, and after
-#               Section C/D writes to conflict-check new entities/formulas)
-#             /consistency-check (primary input — grep-first, GDD-second)
-#             /review-all-gdds (Phase 1 — baseline for Phase 2 checks)
-#             /architecture-review (data structure and interface validation)
-#
-# SEARCH PATTERNS (for skills using Grep):
-#   All entity names:        Grep pattern="^  - name:" path="design/registry/entities.yaml"
-#   Specific entity:         Grep pattern="  - name: goblin" path="design/registry/entities.yaml"
-#   All items:               Grep pattern="^  - name:" path="design/registry/entities.yaml" (items section)
-#   What combat.md owns:     Grep pattern="source: design/gdd/combat.md"
-#   What inventory.md uses:  Grep pattern="referenced_by.*inventory"
-#   All gold values:          Grep pattern="value_gold:"
-#   Deprecated entries:      Grep pattern="status: deprecated"
-#
-# FORMAT: YAML. Consistent indentation is critical for grep reliability.
-#   Sections: entities | items | formulas | constants
-#   Each entry: name, status, source, referenced_by[], attributes{}, added, revised
 
-version: 1
-last_updated: ""
+version: 2
+last_updated: "2026-07-09"
 
 # ─── ENTITIES ────────────────────────────────────────────────────────────────
 # Named game-world objects: enemies, NPCs, characters, factions, bosses.
-# Register an entity here when it appears in more than one GDD — e.g., an
-# enemy defined in combat.md that also drops items listed in inventory.md.
-#
-# Required fields: name, status, source, referenced_by, added
-# Attribute fields: any key stats that could appear in another GDD
-#   (health, damage, drops, faction, etc.)
 
-entities: []
+entities:
+  # ── Monsters ──
+  - name: Goblin
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+      - src/game/systems/loot.ts
+    category: monster
+    base_hp: 15
+    base_defense: 2
+    base_level: 1
+    added: 2026-07-09
+    revised: ""
 
-# Example (remove when first real entry is added):
-#
-# entities:
-#   - name: goblin
-#     status: active              # active | deprecated
-#     source: design/gdd/combat.md
-#     referenced_by:
-#       - design/gdd/combat.md
-#       - design/gdd/inventory.md
-#     health: 40
-#     damage: 8
-#     drops:
-#       - item: goblin_arm        # must match an entry in items section
-#         qty: 1
-#         drop_rate: 0.8          # 0.0–1.0
-#     added: 2026-03-26
-#     revised: ""
+  - name: Goblin Fighter
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 25
+    base_defense: 4
+    base_level: 2
+    added: 2026-07-09
+    revised: ""
 
+  - name: Skeleton
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 45
+    base_defense: 6
+    base_level: 5
+    added: 2026-07-09
+    revised: ""
+
+  - name: Skeleton Archer
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 30
+    base_defense: 3
+    base_level: 6
+    added: 2026-07-09
+    revised: ""
+
+  - name: Skeleton Knight
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 80
+    base_defense: 12
+    base_level: 8
+    added: 2026-07-09
+    revised: ""
+
+  - name: Giant
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 120
+    base_defense: 15
+    base_level: 12
+    added: 2026-07-09
+    revised: ""
+
+  - name: Elite Giant
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 200
+    base_defense: 22
+    base_level: 15
+    added: 2026-07-09
+    revised: ""
+
+  - name: Young Dragon
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 300
+    base_defense: 30
+    base_level: 22
+    added: 2026-07-09
+    revised: ""
+
+  - name: Elder Dragon
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 500
+    base_defense: 45
+    base_level: 28
+    added: 2026-07-09
+    revised: ""
+
+  - name: Fallen Angel
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 600
+    base_defense: 50
+    base_level: 30
+    added: 2026-07-09
+    revised: ""
+
+  - name: Dark Elf
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 450
+    base_defense: 40
+    base_level: 32
+    added: 2026-07-09
+    revised: ""
+
+  - name: Abyss Guardian
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+    category: monster
+    base_hp: 800
+    base_defense: 60
+    base_level: 35
+    added: 2026-07-09
+    revised: ""
+
+  # ── Bosses ──
+  - name: Goblin King
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+      - src/game/systems/bossEncounter.ts
+    category: boss
+    base_hp: 300
+    base_defense: 15
+    base_level: 10
+    gold_reward: 200
+    abilities: ["Summon Minions", "Berserk"]
+    added: 2026-07-09
+    revised: ""
+
+  - name: Skeleton Lord
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+      - src/game/systems/bossEncounter.ts
+    category: boss
+    base_hp: 600
+    base_defense: 30
+    base_level: 18
+    gold_reward: 500
+    abilities: ["Bone Shield", "Dark Curse"]
+    added: 2026-07-09
+    revised: ""
+
+  - name: Dragon King
+    status: active
+    source: src/game/data/gameMaps.ts
+    referenced_by:
+      - src/game/data/gameMaps.ts
+      - src/game/systems/bossEncounter.ts
+    category: boss
+    base_hp: 2000
+    base_defense: 60
+    base_level: 35
+    gold_reward: 2000
+    abilities: ["Fire Breath", "Tail Swipe", "Fear Roar"]
+    added: 2026-07-09
+    revised: ""
 
 # ─── ITEMS ───────────────────────────────────────────────────────────────────
 # Named collectables, equipment, consumables, crafting materials, currency.
-# Register an item when its name or value appears in more than one GDD.
-#
-# Required fields: name, status, source, referenced_by, added
-# Attribute fields: value_gold, weight, stackable, category, and any stat
-#   modifiers that another system (e.g., economy, crafting) might reference.
 
-items: []
+items:
+  # ── Weapons ──
+  - name: Short Sword
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/data/gameMaps.ts
+    id: short_sword
+    slot: weapon
+    tier: normal
+    attack_power: 12
+    required_level: 1
+    value_gold: 300
+    added: 2026-07-09
+    revised: ""
 
-# Example:
-#
-# items:
-#   - name: goblin_arm
-#     status: active
-#     source: design/gdd/combat.md   # drop defined in combat GDD
-#     referenced_by:
-#       - design/gdd/combat.md
-#       - design/gdd/inventory.md    # inventory GDD lists its weight/stack rules
-#       - design/gdd/economy.md      # economy GDD references its sell price
-#     value_gold: 5
-#     weight: 1
-#     stackable: true
-#     category: crafting_material
-#     added: 2026-03-26
-#     revised: ""
+  - name: Hand Axe
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/data/gameMaps.ts
+    id: hand_axe
+    slot: weapon
+    tier: normal
+    attack_power: 14
+    required_level: 3
+    value_gold: 400
+    added: 2026-07-09
+    revised: ""
 
+  - name: Rapier
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: rapier
+    slot: weapon
+    tier: magic
+    attack_power: 20
+    required_level: 5
+    value_gold: 800
+    added: 2026-07-09
+    revised: ""
+
+  - name: Battle Axe
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/data/gameMaps.ts
+    id: battle_axe
+    slot: weapon
+    tier: rare
+    attack_power: 35
+    required_level: 10
+    value_gold: 2000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Blade
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/data/gameMaps.ts
+    id: blade
+    slot: weapon
+    tier: magic
+    attack_power: 40
+    required_level: 15
+    value_gold: 3500
+    added: 2026-07-09
+    revised: ""
+
+  - name: Doom Blade
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/data/gameMaps.ts
+    id: doom_blade
+    slot: weapon
+    tier: rare
+    attack_power: 60
+    required_level: 20
+    value_gold: 6000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Legendary Sword
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/data/gameMaps.ts
+    id: legendary_sword
+    slot: weapon
+    tier: rare
+    attack_power: 80
+    required_level: 30
+    value_gold: 10000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Skull Staff
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: skull_staff
+    slot: weapon
+    tier: normal
+    attack_power: 10
+    required_class: darkWizard
+    required_level: 1
+    value_gold: 250
+    added: 2026-07-09
+    revised: ""
+
+  - name: Angel Staff
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: angel_staff
+    slot: weapon
+    tier: magic
+    attack_power: 25
+    required_class: darkWizard
+    required_level: 8
+    value_gold: 1500
+    added: 2026-07-09
+    revised: ""
+
+  - name: Devil Staff
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: devil_staff
+    slot: weapon
+    tier: rare
+    attack_power: 50
+    required_class: darkWizard
+    required_level: 18
+    value_gold: 5000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Short Bow
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: short_bow
+    slot: weapon
+    tier: normal
+    attack_power: 11
+    required_class: elf
+    required_level: 1
+    value_gold: 280
+    added: 2026-07-09
+    revised: ""
+
+  - name: Crossbow
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: crossbow
+    slot: weapon
+    tier: magic
+    attack_power: 28
+    required_class: elf
+    required_level: 10
+    value_gold: 1800
+    added: 2026-07-09
+    revised: ""
+
+  - name: Golden Crossbow
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: golden_crossbow
+    slot: weapon
+    tier: rare
+    attack_power: 55
+    required_class: elf
+    required_level: 22
+    value_gold: 7000
+    added: 2026-07-09
+    revised: ""
+
+  # ── Armor: Pad Set ──
+  - name: Pad Helm
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: pad_helm
+    slot: helm
+    tier: normal
+    defense: 8
+    set: Pad
+    required_level: 1
+    value_gold: 200
+    added: 2026-07-09
+    revised: ""
+
+  - name: Pad Armor
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: pad_armor
+    slot: armor
+    tier: normal
+    defense: 15
+    set: Pad
+    required_level: 1
+    value_gold: 300
+    added: 2026-07-09
+    revised: ""
+
+  - name: Pad Pants
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: pad_pants
+    slot: pants
+    tier: normal
+    defense: 10
+    set: Pad
+    required_level: 1
+    value_gold: 250
+    added: 2026-07-09
+    revised: ""
+
+  - name: Pad Gloves
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: pad_gloves
+    slot: gloves
+    tier: normal
+    defense: 5
+    set: Pad
+    required_level: 1
+    value_gold: 150
+    added: 2026-07-09
+    revised: ""
+
+  - name: Pad Boots
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: pad_boots
+    slot: boots
+    tier: normal
+    defense: 5
+    set: Pad
+    required_level: 1
+    value_gold: 150
+    added: 2026-07-09
+    revised: ""
+
+  # ── Armor: Bone Set ──
+  - name: Bone Helm
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: bone_helm
+    slot: helm
+    tier: magic
+    defense: 18
+    set: Bone
+    required_level: 15
+    value_gold: 800
+    added: 2026-07-09
+    revised: ""
+
+  - name: Bone Armor
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: bone_armor
+    slot: armor
+    tier: magic
+    defense: 35
+    set: Bone
+    required_level: 15
+    value_gold: 1500
+    added: 2026-07-09
+    revised: ""
+
+  - name: Bone Pants
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: bone_pants
+    slot: pants
+    tier: magic
+    defense: 22
+    set: Bone
+    required_level: 15
+    value_gold: 1000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Bone Gloves
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: bone_gloves
+    slot: gloves
+    tier: magic
+    defense: 12
+    set: Bone
+    required_level: 15
+    value_gold: 600
+    added: 2026-07-09
+    revised: ""
+
+  - name: Bone Boots
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: bone_boots
+    slot: boots
+    tier: magic
+    defense: 10
+    set: Bone
+    required_level: 15
+    value_gold: 500
+    added: 2026-07-09
+    revised: ""
+
+  # ── Armor: Adamantine Set ──
+  - name: Adamantine Helm
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: adamantine_helm
+    slot: helm
+    tier: set
+    defense: 30
+    set: Adamantine
+    required_level: 25
+    stat_bonuses: { stamina: 3 }
+    value_gold: 3000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Adamantine Armor
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: adamantine_armor
+    slot: armor
+    tier: set
+    defense: 55
+    set: Adamantine
+    required_level: 25
+    stat_bonuses: { stamina: 5 }
+    value_gold: 5000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Adamantine Pants
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: adamantine_pants
+    slot: pants
+    tier: set
+    defense: 35
+    set: Adamantine
+    required_level: 25
+    stat_bonuses: { stamina: 2 }
+    value_gold: 3500
+    added: 2026-07-09
+    revised: ""
+
+  - name: Adamantine Gloves
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: adamantine_gloves
+    slot: gloves
+    tier: set
+    defense: 20
+    set: Adamantine
+    required_level: 25
+    value_gold: 2000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Adamantine Boots
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: adamantine_boots
+    slot: boots
+    tier: set
+    defense: 18
+    set: Adamantine
+    required_level: 25
+    value_gold: 1800
+    added: 2026-07-09
+    revised: ""
+
+  # ── Armor: Dragon Set ──
+  - name: Dragon Helm
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: dragon_helm
+    slot: helm
+    tier: set
+    defense: 45
+    set: Dragon
+    required_level: 40
+    stat_bonuses: { strength: 5 }
+    value_gold: 6000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Dragon Armor
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: dragon_armor
+    slot: armor
+    tier: set
+    defense: 80
+    set: Dragon
+    required_level: 40
+    stat_bonuses: { strength: 10 }
+    value_gold: 12000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Dragon Pants
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: dragon_pants
+    slot: pants
+    tier: set
+    defense: 50
+    set: Dragon
+    required_level: 40
+    stat_bonuses: { strength: 3 }
+    value_gold: 8000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Dragon Gloves
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: dragon_gloves
+    slot: gloves
+    tier: set
+    defense: 30
+    set: Dragon
+    required_level: 40
+    value_gold: 5000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Dragon Boots
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/systems/setBonuses.ts
+    id: dragon_boots
+    slot: boots
+    tier: set
+    defense: 25
+    set: Dragon
+    required_level: 40
+    value_gold: 4000
+    added: 2026-07-09
+    revised: ""
+
+  # ── Class Armor ──
+  - name: DK Helm
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: dk_helm
+    slot: helm
+    tier: rare
+    defense: 35
+    required_class: darkKnight
+    required_level: 20
+    stat_bonuses: { strength: 3, stamina: 2 }
+    value_gold: 3000
+    added: 2026-07-09
+    revised: ""
+
+  - name: DK Armor
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: dk_armor
+    slot: armor
+    tier: rare
+    defense: 60
+    required_class: darkKnight
+    required_level: 20
+    stat_bonuses: { strength: 5, stamina: 3 }
+    value_gold: 5500
+    added: 2026-07-09
+    revised: ""
+
+  - name: DW Helm
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: dw_helm
+    slot: helm
+    tier: rare
+    defense: 25
+    required_class: darkWizard
+    required_level: 20
+    stat_bonuses: { energy: 3, agility: 2 }
+    value_gold: 2800
+    added: 2026-07-09
+    revised: ""
+
+  - name: DW Armor
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: dw_armor
+    slot: armor
+    tier: rare
+    defense: 45
+    required_class: darkWizard
+    required_level: 20
+    stat_bonuses: { energy: 5, agility: 3 }
+    value_gold: 5000
+    added: 2026-07-09
+    revised: ""
+
+  # ── Shields ──
+  - name: Small Shield
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: small_shield
+    slot: shield
+    tier: normal
+    defense: 10
+    required_level: 1
+    value_gold: 200
+    added: 2026-07-09
+    revised: ""
+
+  - name: Horn Shield
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: horn_shield
+    slot: shield
+    tier: magic
+    defense: 25
+    required_level: 10
+    value_gold: 1200
+    added: 2026-07-09
+    revised: ""
+
+  - name: Skull Shield
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: skull_shield
+    slot: shield
+    tier: rare
+    defense: 40
+    required_level: 22
+    value_gold: 4000
+    added: 2026-07-09
+    revised: ""
+
+  # ── Wings ──
+  - name: Wings of Dragon
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/entities/wings.ts
+    id: wings_dragon_t1
+    slot: wings
+    tier: rare
+    defense: 20
+    required_class: darkKnight
+    required_level: 60
+    value_gold: 15000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Wings of Heaven
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+      - src/game/entities/wings.ts
+    id: wings_heaven_t1
+    slot: wings
+    tier: rare
+    defense: 15
+    required_class: darkWizard
+    required_level: 60
+    value_gold: 15000
+    added: 2026-07-09
+    revised: ""
+
+  # ── Accessories ──
+  - name: Ring of Strength
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: ring_of_strength
+    slot: accessory
+    tier: magic
+    attack_power: 5
+    required_level: 10
+    stat_bonuses: { strength: 3 }
+    value_gold: 2000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Ring of Energy
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: ring_of_energy
+    slot: accessory
+    tier: magic
+    attack_power: 5
+    required_level: 10
+    stat_bonuses: { energy: 3 }
+    value_gold: 2000
+    added: 2026-07-09
+    revised: ""
+
+  - name: Pendant of Life
+    status: active
+    source: src/game/data/itemDatabase.ts
+    referenced_by:
+      - src/game/data/itemDatabase.ts
+    id: pendant_of_life
+    slot: accessory
+    tier: rare
+    required_level: 20
+    stat_bonuses: { stamina: 5 }
+    value_gold: 4000
+    added: 2026-07-09
+    revised: ""
 
 # ─── FORMULAS ────────────────────────────────────────────────────────────────
-# Named calculations with defined variables and output ranges.
-# Register a formula when its output feeds into another system's input,
-# or when another GDD references it by name.
-#
-# Required fields: name, status, source, referenced_by, variables[],
-#   output_range[min, max], added
-# Optional: expression (the actual formula), notes
+# Shared formulas and curves referenced by multiple systems.
 
-formulas: []
+formulas:
+  - name: experience_required_per_level
+    status: active
+    source: src/game/entities/character.ts
+    referenced_by:
+      - src/game/entities/character.ts
+      - design/gdd/character-progression-system.md
+    expression: "level * 100"
+    variables:
+      level: current character level
+    added: 2026-07-09
+    revised: ""
 
-# Example:
-#
-# formulas:
-#   - name: damage_formula
-#     status: active
-#     source: design/gdd/combat.md
-#     referenced_by:
-#       - design/gdd/combat.md
-#       - design/gdd/progression.md   # progression GDD scales attack variable
-#     variables:
-#       - attack
-#       - defense
-#       - crit_chance
-#       - crit_multiplier
-#     output_range: [0, 999]
-#     expression: "max(0, attack - defense) * (1 + crit_chance * crit_multiplier)"
-#     notes: "Output feeds into health-system damage intake. Min is 0 (armour
-#       can absorb all damage). Max is uncapped in formula but tuning knob
-#       damage_cap in combat.md clamps at 999."
-#     added: 2026-03-26
-#     revised: ""
+  - name: base_damage
+    status: active
+    source: src/game/systems/combat.ts
+    referenced_by:
+      - src/game/systems/combat.ts
+      - design/gdd/combat-system.md
+    expression: "floor(totalAttackPower + primaryStat * 0.3)"
+    variables:
+      totalAttackPower: sum of weapon attack power and percent bonuses
+      primaryStat: class-dependent stat (STR/DK/MG, ENG/DW/Sum, AGI/Elf)
+    added: 2026-07-09
+    revised: ""
 
+  - name: defense_reduction
+    status: active
+    source: src/game/systems/combat.ts
+    referenced_by:
+      - src/game/systems/combat.ts
+      - design/gdd/combat-system.md
+    expression: "100 / (100 + defense)"
+    variables:
+      defense: defender's defense value
+    added: 2026-07-09
+    revised: ""
+
+  - name: critical_chance
+    status: active
+    source: src/game/systems/combat.ts
+    referenced_by:
+      - src/game/systems/combat.ts
+      - design/gdd/combat-system.md
+    expression: "agility * 0.002"
+    variables:
+      agility: character agility stat
+    added: 2026-07-09
+    revised: ""
 
 # ─── CONSTANTS ───────────────────────────────────────────────────────────────
-# Named numerical values referenced across multiple systems.
-# Register a constant when it is defined in one GDD but another GDD must
-# agree with it (e.g., gold carry limit defined in economy but checked in
-# inventory, or base inventory slots defined in inventory but displayed in HUD).
-#
-# Required fields: name, status, source, referenced_by, value, unit, added
+# Global constants referenced by multiple systems.
 
-constants: []
+constants:
+  - name: exp_per_kill
+    status: active
+    source: src/game/systems/autoFarm.ts
+    referenced_by:
+      - src/game/systems/autoFarm.ts
+      - design/gdd/auto-farm-system.md
+    value: 50
+    description: Base experience awarded for each monster killed during auto-farm.
+    added: 2026-07-09
+    revised: ""
 
-# Example:
-#
-# constants:
-#   - name: gold_carry_limit
-#     status: active
-#     source: design/gdd/economy.md
-#     referenced_by:
-#       - design/gdd/economy.md
-#       - design/gdd/inventory.md   # inventory enforces the carry limit
-#       - design/gdd/ui.md          # HUD displays current gold vs limit
-#     value: 9999
-#     unit: gold
-#     added: 2026-03-26
-#     revised: ""
-#
-#   - name: base_inventory_slots
-#     status: active
-#     source: design/gdd/inventory.md
-#     referenced_by:
-#       - design/gdd/inventory.md
-#       - design/gdd/progression.md  # progression unlocks additional slots
-#     value: 20
-#     unit: slots
-#     added: 2026-03-26
-#     revised: ""
+  - name: max_enhance_level
+    status: active
+    source: src/game/entities/equipment.ts
+    referenced_by:
+    
+      - src/game/entities/equipment.ts
+    value: 15
+    description: Maximum number of times an item can be enhanced.
+    added: 2026-07-09
+    revised: ""
+
+  - name: max_squad_size
+    status: active
+    source: src/game/systems/team.ts
+    referenced_by:
+      - src/game/systems/team.ts
+    value: 4
+    description: Maximum number of characters in a player squad.
+    added: 2026-07-09
+    revised: ""
+
+  - name: min_reset_level
+    status: active
+    source: src/game/entities/character.ts
+    referenced_by:
+      - src/game/entities/character.ts
+    value: 10
+    description: Minimum character level required to perform a reset.
+    added: 2026-07-09
+    revised: ""
