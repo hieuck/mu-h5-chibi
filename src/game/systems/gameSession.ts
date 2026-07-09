@@ -76,4 +76,11 @@ export class GameSession {
     if (slot) return this._inventory.filterBySlot(slot as any);
     return this._inventory.list();
   }
+
+  setCurrentMap(mapId: string): void {
+    const map = this._db.get(mapId);
+    if (map) {
+      this._currentMap = map;
+    }
+  }
 }

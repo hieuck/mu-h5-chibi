@@ -161,6 +161,14 @@ export class Character {
     this.pet = pet;
   }
 
+  setUnspentStatPoints(points: number): void {
+    this._unspentStatPoints = points;
+  }
+
+  setResetCount(count: number): void {
+    this._resetCount = count;
+  }
+
   private _applyStatBonuses(item: Equipment, adding: boolean): void {
     if (!item.statBonuses) return;
     const sign = adding ? 1 : -1;
